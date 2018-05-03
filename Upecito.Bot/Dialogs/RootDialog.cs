@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using SimpleInjector;
+using Upecito.Data.Interface;
 
 namespace Upecito.Bot.Dialogs
 {
@@ -46,6 +47,16 @@ namespace Upecito.Bot.Dialogs
         }
 
         public virtual async Task ChildDialogComplete(IDialogContext context, IAwaitable<object> response)
+        {
+            var sesionData = context.UserData.GetValueOrDefault<ISesionData>("sesion");
+
+            if (sesionData != null)
+                context.Done(true);
+            else
+                context.Call(new WelcomeDialog(), EndWelcome);
+        }
+
+        public virtual async Task EndWelcome(IDialogContext context, IAwaitable<object> response)
         {
             context.Done(this);
         }

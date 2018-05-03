@@ -29,10 +29,12 @@ namespace Upecito.Data.Implementation
 
                 return sesion;
             }
-            catch(Exception e)
+            catch (Exception ex)
             {
-                throw;
+                LogError(ex);
             }
+
+            return null;
         }
     }
 }
