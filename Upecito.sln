@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upecito.Business", "Upecito
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upecito.App", "Upecito.App\Upecito.App.csproj", "{6FA9C026-88EF-40E3-9A54-6B023D72BADB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Upecito.Bot", "Upecito.Bot\Upecito.Bot.csproj", "{9C7E3A46-B60F-4052-9A21-DC8D1A942216}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{6FA9C026-88EF-40E3-9A54-6B023D72BADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FA9C026-88EF-40E3-9A54-6B023D72BADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FA9C026-88EF-40E3-9A54-6B023D72BADB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C7E3A46-B60F-4052-9A21-DC8D1A942216}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C7E3A46-B60F-4052-9A21-DC8D1A942216}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C7E3A46-B60F-4052-9A21-DC8D1A942216}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C7E3A46-B60F-4052-9A21-DC8D1A942216}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
