@@ -15,25 +15,27 @@ namespace Upecito.Bot.Dialogs
     [Serializable]
     public class MenuDialog : IDialog<object>
     {
-        private const string Academic = "Consultas Académicas";
-        private const string Technical = "Consultas y Problemas Técnicos";
+        private enum Selection
+        {
+            Academic, Technical
+        }
 
         public async Task StartAsync(IDialogContext context)
         {
             ShowPrompt(context);
         }
 
-        private async Task OnOptionSelected(IDialogContext context, IAwaitable<string> result)
+        private async Task OnOptionSelected(IDialogContext context, IAwaitable<Selection> result)
         {
             var optionSelected = await result;
 
             switch (optionSelected)
             {
-                case Academic:
+                case Selection.Academic:
                     var userName = context.Activity.From.Name;
                     PromptDialog.Text(context, ResumeGetAcademicIntent, $"Por favor {userName}, dime tu consulta sobre Consultas Académicas", "Intenta de nuevo");
                     break;
-                case Technical:
+                case Selection.Technical:
                     await context.PostAsync("Seleccionaste consulta tecnica");
                     ShowPrompt(context);
                     break;
@@ -211,7 +213,7 @@ namespace Upecito.Bot.Dialogs
             solicitudManager.ActualizarEstado(solicitud.IdSolicitud, receivedResult.Speech);
 
             // 4.1.14  El caso de uso finaliza
-            //context.Wait(ShowPrompt);
+            await Task.Delay(2000);
             ShowPrompt(context);
         }
 
@@ -222,7 +224,10 @@ namespace Upecito.Bot.Dialogs
 
         private void ShowPrompt(IDialogContext context)
         {
-            PromptDialog.Choice(context, OnOptionSelected, new[] { Academic, Technical }, "Selecciona el canal de atención en el que requieres ayuda", "No es una opción válida");
+            var options = new[] { Selection.Academic, Selection.Technical };
+            var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
+
+            PromptDialog.Choice<Selection>(context, OnOptionSelected, options, "Selecciona el canal de atención en el que requieres ayuda", descriptions: descriptions);
         }
     }
 }
