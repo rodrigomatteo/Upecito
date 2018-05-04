@@ -11,15 +11,22 @@ namespace Upecito.Bot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
+        private static bool showed = false;
+
         public async Task StartAsync(IDialogContext context)
         {
-            var message = context.MakeMessage();
-            var attachment = GetInfoCard();
+            if (!showed)
+            {
+                var message = context.MakeMessage();
+                var attachment = GetInfoCard();
 
-            message.Attachments.Add(attachment);
-            await context.PostAsync(message);
+                message.Attachments.Add(attachment);
+                await context.PostAsync(message);
 
-            context.Wait(this.ShowStartButton);
+                context.Wait(ShowStartButton);
+            }
+            else
+                context.Call(new WelcomeDialog(), ChildDialogComplete);
         }
 
         public enum StartOptions
@@ -29,21 +36,23 @@ namespace Upecito.Bot.Dialogs
 
         public virtual async Task ShowStartButton(IDialogContext context, IAwaitable<IMessageActivity> activity)
         {
-            var message = await activity;
+            if (!showed)
+            {
+                PromptDialog.Choice(
+                    context: context,
+                    resume: ChoiceReceivedAsync,
+                    options: (IEnumerable<StartOptions>)Enum.GetValues(typeof(StartOptions)),
+                    prompt: "Presiona el botón para iniciar",
+                    retry: "Por favor intenta de nuevo"
+                );
+            }
 
-            PromptDialog.Choice(
-                context: context,
-                resume: ChoiceReceivedAsync,
-                options: (IEnumerable<StartOptions>)Enum.GetValues(typeof(StartOptions)),
-                prompt: "Presiona el botón para iniciar",
-                retry: "Por favor intenta de nuevo"
-            );
+            showed = true;
         }
 
         public virtual async Task ChoiceReceivedAsync(IDialogContext context, IAwaitable<StartOptions> activity)
         {
             context.Call<object>(new WelcomeDialog(), ChildDialogComplete);
-
         }
 
         public virtual async Task ChildDialogComplete(IDialogContext context, IAwaitable<object> response)

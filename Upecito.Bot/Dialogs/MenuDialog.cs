@@ -58,6 +58,7 @@ namespace Upecito.Bot.Dialogs
             container.RegisterSingleton<IHttpClientFactory, HttpClientFactory>();
             container.RegisterSingleton<ISolicitud, SolicitudManager>();
             container.RegisterSingleton<IIntencion, IntencionManager>();
+            container.RegisterSingleton<ISesion, SesionManager>();
 
             var solicitudManager = container.GetInstance<ISolicitud>();
             var solicitud = solicitudManager.CrearSolicitud(1, userId, null,activity.Text,"");
