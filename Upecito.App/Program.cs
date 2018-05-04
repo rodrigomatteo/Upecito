@@ -25,7 +25,7 @@ namespace Upecito.App
             container.Register<ISesion, SesionManager>();
             container.Register<ISesionData, SesionData>();
 
-            container.GetInstance<ISesion>().CrearSesion("");
+            container.GetInstance<ISesion>().CrearSesion(1);
         }
     }
 }

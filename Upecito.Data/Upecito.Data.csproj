@@ -61,7 +61,10 @@
   <ItemGroup>
     <Compile Include="Base.cs" />
     <Compile Include="Implementation\BaseData.cs" />
+    <Compile Include="Implementation\IntencionData.cs" />
+    <Compile Include="Interface\IIntencionData.cs" />
     <Compile Include="Interface\ISesionData.cs" />
+    <Compile Include="Interface\ISolicitudData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Implementation\SesionData.cs" />
     <Compile Include="Implementation\SolicitudData.cs" />

@@ -1,6 +1,5 @@
 ﻿using SimpleInjector;
 using Upecito.Data.Interface;
-using Upecito.Data.Implementation;
 using Upecito.Interface;
 using Upecito.Model;
 
@@ -15,10 +14,16 @@ namespace Upecito.Business
             this.container = container;
         }
 
-        public Sesion CrearSesion(string idAlumno)
+        public Sesion CrearSesion(long idAlumno)
         {
             var sesionData = container.GetInstance<ISesionData>();
             return sesionData.Crear(idAlumno);
+        }
+
+        public Sesion CerrarSesion(long idSesion)
+        {
+            var sesionData = container.GetInstance<ISesionData>();
+            return sesionData.Cerrar(idSesion);
         }
     }
 }

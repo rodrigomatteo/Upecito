@@ -8,6 +8,8 @@ using Api.Ai.Infrastructure.Factories;
 using SimpleInjector;
 using Upecito.Interface;
 using Upecito.Business;
+using Upecito.Data.Implementation;
+using Upecito.Data.Interface;
 using Upecito.Model;
 
 namespace Upecito.Bot.Dialogs
@@ -61,6 +63,9 @@ namespace Upecito.Bot.Dialogs
             container.RegisterSingleton<ISolicitud, SolicitudManager>();
             container.RegisterSingleton<IIntencion, IntencionManager>();
             container.RegisterSingleton<ISesion, SesionManager>();
+            container.Register<ISesionData, SesionData>();
+            container.Register<ISolicitudData, SolicitudData>();
+            container.Register<IIntencionData, IntencionData>();
 
             var solicitudManager = container.GetInstance<ISolicitud>();
             var solicitud = solicitudManager.CrearSolicitud(1, userId, null,activity.Text,"");
@@ -84,11 +89,11 @@ namespace Upecito.Bot.Dialogs
                 if (receivedResult.ExistValidIntent)
                 {
                     var intent = receivedResult.GetValidIntent();
-                    var baseConocimiento = intencionManager.ObtenerCategoria(intent);
+                    var intencion = intencionManager.ObtenerCategoria(intent);
 
                     context.UserData.SetValue<Result>("result", receivedResult);
 
-                    switch (baseConocimiento.Categoria)
+                    switch (intencion.Nombre)
                     {
                         /*
                          * 4.1.7	Si la “Intención de Consulta” es “Programación de Actividades”, 

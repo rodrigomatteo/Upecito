@@ -8,8 +8,7 @@ namespace Upecito.Model
 {
     public class Intencion
     {
-        public string Categoria { get; set; }
-        public string Intent { get; set; }
-
+        public long IdIntencion { get; set; }
+        public string Nombre { get; set; }
     }
 }

@@ -1,5 +1,5 @@
-﻿using Upecito.Data;
-using Upecito.Data.Implementation;
+﻿using SimpleInjector;
+using Upecito.Data.Interface;
 using Upecito.Interface;
 using Upecito.Model;
 
@@ -7,9 +7,17 @@ namespace Upecito.Business
 {
     public class SolicitudManager : ISolicitud
     {
+        private Container container;
+
+        public SolicitudManager(Container container)
+        {
+            this.container = container;
+        }
+
         public Solicitud CrearSolicitud(int idCanalAtencion, int idAlumno, int? idCurso, string consulta, string usuario)
         {
-            return new SolicitudData().Crear(idCanalAtencion, idAlumno, idCurso, consulta, usuario);
+            var solicitudData = container.GetInstance<ISolicitudData>();
+            return solicitudData.Crear(idCanalAtencion, idAlumno, idCurso, consulta, usuario);
         }
 
         public Solicitud ActualizarEstado(long idSolicitud, string estado)
@@ -21,6 +29,5 @@ namespace Upecito.Business
         {
             return new Solicitud();
         }
-
     }
 }

@@ -4,6 +4,7 @@ namespace Upecito.Interface
 {
     public interface ISesion
     {
-        Sesion CrearSesion(string codigoUsuario);
+        Sesion CrearSesion(long idUsuario);
+        Sesion CerrarSesion(long idSesion);
     }
 }
