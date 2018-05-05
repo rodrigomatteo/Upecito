@@ -15,18 +15,13 @@ namespace Upecito.Bot.Dialogs
 
         public async Task StartAsync(IDialogContext context)
         {
-            if (!showed)
-            {
-                var message = context.MakeMessage();
-                var attachment = GetInfoCard();
+            var message = context.MakeMessage();
+            var attachment = GetInfoCard();
 
-                message.Attachments.Add(attachment);
-                await context.PostAsync(message);
+            message.Attachments.Add(attachment);
+            await context.PostAsync(message);
 
-                context.Wait(ShowStartButton);
-            }
-            else
-                context.Call(new WelcomeDialog(), ChildDialogComplete);
+            context.Wait(ShowStartButton);
         }
 
         public enum StartOptions
@@ -36,18 +31,13 @@ namespace Upecito.Bot.Dialogs
 
         public virtual async Task ShowStartButton(IDialogContext context, IAwaitable<IMessageActivity> activity)
         {
-            if (!showed)
-            {
-                PromptDialog.Choice(
-                    context: context,
-                    resume: ChoiceReceivedAsync,
-                    options: (IEnumerable<StartOptions>)Enum.GetValues(typeof(StartOptions)),
-                    prompt: "Presiona el botón para iniciar",
-                    retry: "Por favor intenta de nuevo"
-                );
-            }
-
-            showed = true;
+            PromptDialog.Choice(
+                context: context,
+                resume: ChoiceReceivedAsync,
+                options: (IEnumerable<StartOptions>)Enum.GetValues(typeof(StartOptions)),
+                prompt: "Presiona el botón para iniciar",
+                retry: "Por favor intenta de nuevo"
+            );
         }
 
         public virtual async Task ChoiceReceivedAsync(IDialogContext context, IAwaitable<StartOptions> activity)

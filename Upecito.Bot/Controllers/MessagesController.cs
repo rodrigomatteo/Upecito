@@ -40,7 +40,7 @@ namespace Upecito.Bot
         {
             // check if activity is of type message
             if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
-                await Conversation.SendAsync(activity, () => new RootDialog());
+                    await Conversation.SendAsync(activity, () => new WelcomeDialog());
             else
                 HandleSystemMessage(activity);
 
@@ -61,8 +61,12 @@ namespace Upecito.Bot
                 // Not available in all channels
                 if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
                 {
-                    var dialog = container.GetInstance<RootDialog>();
-                    await Conversation.SendAsync(message, () => dialog);
+                    var bot = message.MembersAdded.FirstOrDefault();
+                    if (bot != null && bot.Name.Equals("Upecito Bot"))
+                    {
+                        var dialog = container.GetInstance<RootDialog>();
+                        await Conversation.SendAsync(message, () => dialog);
+                    }
                 }
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)

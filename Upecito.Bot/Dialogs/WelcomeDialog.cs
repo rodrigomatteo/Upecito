@@ -33,13 +33,14 @@ namespace Upecito.Bot.Dialogs
             var sesion = container.GetInstance<ISesion>();
             var sesionData = sesion.CrearSesion(userId);
 
-            if (sesionData != null)
+            if (sesionData == null)
             {
-                context.UserData.SetValue("sesion", sesionData);
-                context.Call(new MenuDialog(), ResumeWelcome);
-            }
-            else
                 context.Done(true);
+                return;
+            }
+
+            context.UserData.SetValue("sesion", sesionData);
+            context.Call(new MenuDialog(), ResumeWelcome);
         }
 
         private async Task ResumeWelcome(IDialogContext context, IAwaitable<object> result)

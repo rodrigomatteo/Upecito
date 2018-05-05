@@ -44,7 +44,16 @@ namespace Upecito.Bot.Dialogs
             }
         }
 
+        private async Task ResumeGetAcademicIntent(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            await Process(context);
+        }
         private async Task ResumeGetAcademicIntent(IDialogContext context, IAwaitable<string> result)
+        {
+            await Process(context);
+        }
+
+        private async Task Process(IDialogContext context)
         {
             var activity = context.Activity as Activity;
             var userId = Convert.ToInt32(context.Activity.From.Id);
@@ -68,7 +77,7 @@ namespace Upecito.Bot.Dialogs
             container.Register<IIntencionData, IntencionData>();
 
             var solicitudManager = container.GetInstance<ISolicitud>();
-            var solicitud = solicitudManager.CrearSolicitud(1, userId, null,activity.Text,"");
+            var solicitud = solicitudManager.CrearSolicitud(1, userId, null, activity.Text, "");
             context.UserData.SetValue("solicitud", solicitud);
 
             var handler = container.GetInstance<DialogEngine>();
@@ -93,54 +102,66 @@ namespace Upecito.Bot.Dialogs
 
                     context.UserData.SetValue<Result>("result", receivedResult);
 
-                    switch (intencion.Nombre)
+                    if (intencion != null)
                     {
-                        /*
-                         * 4.1.7	Si la “Intención de Consulta” es “Programación de Actividades”, 
-                         * el sistema extiende el caso de uso: GSAV_CUS005_Consultar Programación de Actividades
-                        */
-                        case "PROGRAMACION":
-                            context.Call(new ProgramacionActividadesDialog(), ResumeAfterSuccessAcademicIntent);
-                            break;
-                        /*
-                         * 4.1.8	Si la “Intención de Consulta” es “Calendario Académico”, 
-                         * el sistema extiende el caso de uso: GSAV_CUS006_Consultar Calendario Académico
-                        */
-                        case "CALENDARIO":
-                            context.Call(new CalendarioDialog(), ResumeAfterSuccessAcademicIntent);
-                            break;
-                        /*
-                        * 4.1.9	Si la “Intención de Consulta” es “Organización de Aula Virtual”, “Matricula”, 
-                        * “Reglamento de Asistencia”, “Retiro del Curso”, “Promedio Ponderado”, el sistema extiende el caso de uso: 
-                        * GSAV_CUS007_Consultar Temas Frecuentes
-                       */
-                        case "AULAVIRTUAL":
-                        case "MATRICULA":
-                        case "ASISTENCIA":
-                        case "RETIRO":
-                        case "PROMEDIO":
-                            context.Call(new PreguntasFrecuentesDialog(), ResumeAfterSuccessAcademicIntent);
-                            break;
-                        /*
-                         * 4.1.10  Si la “Intención de Consulta” es “Créditos de un Curso”, el sistema extiende el caso de uso: 
-                         * GSAV_CUS008_Consultar Créditos de un Curso
-                        */
-                        case "CREDITOS":
-                            context.Call(new CreditosDialog(), ResumeAfterSuccessAcademicIntent);
-                            break;
-                        case "Default Fallback Intent":
-                            context.Call(new EntrenandoDialog(), ResumeAfterUnknownAcademicIntent);
-                            break;
-                        default:
+                        switch (intencion.Nombre)
+                        {
                             /*
-                             * Si en el punto [4.1.3] el sistema corrobora que no existe una repuesta
-                             * para el tipo de consulta ingresada por el alumno, entonces deriva la
-                             * consulta al docente enviando un correo electrónico y actualiza el estado
-                             * de la solicitud académica [GSAV_RN014-Estado de la Solicitud],
-                             * [GSAV_RN004-Comsultas Académicas No Resueltas]
-                             */
-                            context.Call(new NoRespuestaDialog(), ResumeAfterUnknownAcademicIntent);
-                            break;
+                             * 4.1.7	Si la “Intención de Consulta” es “Programación de Actividades”, 
+                             * el sistema extiende el caso de uso: GSAV_CUS005_Consultar Programación de Actividades
+                            */
+                            case "PROGRAMACION":
+                                context.Call(new ProgramacionActividadesDialog(), ResumeAfterSuccessAcademicIntent);
+                                break;
+                            /*
+                             * 4.1.8	Si la “Intención de Consulta” es “Calendario Académico”, 
+                             * el sistema extiende el caso de uso: GSAV_CUS006_Consultar Calendario Académico
+                            */
+                            case "CALENDARIO":
+                                context.Call(new CalendarioDialog(), ResumeAfterSuccessAcademicIntent);
+                                break;
+                            /*
+                            * 4.1.9	Si la “Intención de Consulta” es “Organización de Aula Virtual”, “Matricula”, 
+                            * “Reglamento de Asistencia”, “Retiro del Curso”, “Promedio Ponderado”, el sistema extiende el caso de uso: 
+                            * GSAV_CUS007_Consultar Temas Frecuentes
+                           */
+                            case "AULAVIRTUAL":
+                            case "MATRICULA":
+                            case "ASISTENCIA":
+                            case "RETIRO":
+                            case "PROMEDIO":
+                                context.Call(new PreguntasFrecuentesDialog(), ResumeAfterSuccessAcademicIntent);
+                                break;
+                            /*
+                             * 4.1.10  Si la “Intención de Consulta” es “Créditos de un Curso”, el sistema extiende el caso de uso: 
+                             * GSAV_CUS008_Consultar Créditos de un Curso
+                            */
+                            case "CREDITOS":
+                                context.Call(new CreditosDialog(), ResumeAfterSuccessAcademicIntent);
+                                break;
+                            case "Default Fallback Intent":
+                                context.Call(new EntrenandoDialog(), ResumeAfterUnknownAcademicIntent);
+                                break;
+                            default:
+                                /*
+                                 * Si en el punto [4.1.3] el sistema corrobora que no existe una repuesta
+                                 * para el tipo de consulta ingresada por el alumno, entonces deriva la
+                                 * consulta al docente enviando un correo electrónico y actualiza el estado
+                                 * de la solicitud académica [GSAV_RN014-Estado de la Solicitud],
+                                 * [GSAV_RN004-Comsultas Académicas No Resueltas]
+                                 */
+                                context.Call(new NoRespuestaDialog(), ResumeAfterUnknownAcademicIntent);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        var userName = context.Activity.From.Name;
+                        var message = context.MakeMessage();
+                        message.Text = $"{userName}, no he podido registrar tu solicitud";
+
+                        await context.PostAsync(message);
+                        context.Wait(ResumeGetAcademicIntent);
                     }
                 }
                 else
