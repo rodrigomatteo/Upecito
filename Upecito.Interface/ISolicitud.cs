@@ -5,7 +5,6 @@ namespace Upecito.Interface
     public interface ISolicitud
     {
         Solicitud CrearSolicitud(int idCanalAtencion, int idAlumno, int? idCurso, string consulta, string usuario);
-        Solicitud ActualizarEstado(long idSolicitud, string estado);
-        Solicitud ActualizarRespuesta(long idSolicitud, string respuesta);
+        Solicitud Actualizar(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario);
     }
 }

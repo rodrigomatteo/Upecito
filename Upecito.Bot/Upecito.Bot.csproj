@@ -210,9 +210,11 @@
     <Compile Include="DialogEngine.cs" />
     <Compile Include="Dialogs\BaseDialog.cs" />
     <Compile Include="Dialogs\CalendarioDialog.cs" />
+    <Compile Include="Dialogs\CerrarSesionDialog.cs" />
     <Compile Include="Dialogs\CreditosDialog.cs" />
     <Compile Include="Dialogs\EntrenandoDialog.cs" />
     <Compile Include="Dialogs\NoRespuestaDialog.cs" />
+    <Compile Include="Dialogs\OrganizacionDialog.cs" />
     <Compile Include="Dialogs\PreguntasFrecuentesDialog.cs" />
     <Compile Include="Dialogs\ProgramacionActividadesDialog.cs" />
     <Compile Include="Dialogs\RootDialog.cs" />

@@ -121,12 +121,14 @@ namespace Upecito.Bot.Dialogs
                             case AppConstant.Intencion.CALENDARIO:
                                 context.Call(new CalendarioDialog(), ResumeAfterSuccessAcademicIntent);
                                 break;
+                            case AppConstant.Intencion.ORGANIZACION:
+                                context.Call(new OrganizacionDialog(), ResumeAfterSuccessAcademicIntent);
+                                break;
                             /*
                             * 4.1.9	Si la “Intención de Consulta” es “Organización de Aula Virtual”, “Matricula”, 
                             * “Reglamento de Asistencia”, “Retiro del Curso”, “Promedio Ponderado”, el sistema extiende el caso de uso: 
                             * GSAV_CUS007_Consultar Temas Frecuentes
                            */
-                            case AppConstant.Intencion.ORGANIZACION:
                             case AppConstant.Intencion.MATRICULA:
                             case AppConstant.Intencion.ASISTENCIA:
                             case AppConstant.Intencion.RETIRO:
@@ -191,6 +193,7 @@ namespace Upecito.Bot.Dialogs
             container.RegisterSingleton<IApiAiAppServiceFactory, ApiAiAppServiceFactory>();
             container.RegisterSingleton<IHttpClientFactory, HttpClientFactory>();
             container.RegisterSingleton<ISolicitud, SolicitudManager>();
+            container.RegisterSingleton<ISolicitudData, SolicitudData>();
             container.RegisterSingleton<IIntencion, IntencionManager>();
 
             var solicitudManager = container.GetInstance<ISolicitud>();
@@ -198,20 +201,17 @@ namespace Upecito.Bot.Dialogs
             /*
              * 4.1.11	El sistema valida si obtuvo respuesta [GSAV_SolicitudAcadémica] -- Actualiza la solicitud creada con la respuesta obtenida
              */
-            solicitudManager.ActualizarEstado(1, "Atendido");
-
             /*
              * 4.1.12	El sistema actualiza el estado de la Solicitud Académica a “Atendida” [GSAV_RN014-Estado de la Consulta]
              */
+            var solicitud = context.UserData.GetValue<Solicitud>("solicitud");
+            var userName = context.Activity.From.Name;
             Result receivedResult;
             context.UserData.TryGetValue<Result>("result", out receivedResult);
-            solicitudManager.ActualizarEstado(1, receivedResult.Speech);
+            solicitudManager.Actualizar(solicitud.IdSolicitud, null, string.Empty, AppConstant.EstadoSolicitud.ATENDIDO, userName);
 
             // 4.1.14  El caso de uso finaliza
-            //if (reTry)
-                context.Wait(MessageReceivedAsync);
-            //else
-            //    context.Done(true);
+            context.Wait(MessageReceivedAsync);
         }
 
         private async Task ResumeAfterUnknownAcademicIntent(IDialogContext context, IAwaitable<object> result)
@@ -224,6 +224,7 @@ namespace Upecito.Bot.Dialogs
             container.RegisterSingleton<IApiAiAppServiceFactory, ApiAiAppServiceFactory>();
             container.RegisterSingleton<IHttpClientFactory, HttpClientFactory>();
             container.RegisterSingleton<ISolicitud, SolicitudManager>();
+            container.RegisterSingleton<ISolicitudData, SolicitudData>();
             container.RegisterSingleton<IIntencion, IntencionManager>();
 
             var solicitudManager = container.GetInstance<ISolicitud>();
@@ -231,15 +232,15 @@ namespace Upecito.Bot.Dialogs
             /*
              * 4.1.11	El sistema valida si obtuvo respuesta [GSAV_SolicitudAcadémica] -- Actualiza la solicitud creada con la respuesta obtenida
              */
-            var solicitud = context.UserData.GetValue<Solicitud>("solicitud");
-            solicitudManager.ActualizarEstado(solicitud.IdSolicitud, "No Atendido");
-
             /*
              * 4.1.12	El sistema actualiza el estado de la Solicitud Académica a “Atendida” [GSAV_RN014-Estado de la Consulta]
              */
-            Result receivedResult;
-            context.UserData.TryGetValue<Result>("result", out receivedResult);
-            solicitudManager.ActualizarEstado(solicitud.IdSolicitud, receivedResult.Speech);
+            var solicitud = context.UserData.GetValueOrDefault<Solicitud>("solicitud");
+            var userName = context.Activity.From.Name;
+            var receivedResult = context.UserData.GetValueOrDefault<Result>("result");
+
+            if(solicitud != null && receivedResult != null)
+                solicitudManager.Actualizar(solicitud.IdSolicitud, null, string.Empty, AppConstant.EstadoSolicitud.INVALIDO, userName);
 
             // 4.1.14  El caso de uso finaliza
             await Task.Delay(2000);

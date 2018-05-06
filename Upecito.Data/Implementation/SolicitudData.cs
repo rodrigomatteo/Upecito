@@ -19,7 +19,6 @@ namespace Upecito.Data.Implementation
                 var solicitud = new Solicitud()
                 {
                     IdSolicitud = gsavSolicitud.IDSOLICITUD,
-                    IdCanalAtencion = gsavSolicitud.IDCANALATENCION,
                     IdAlumno = gsavSolicitud.IDALUMNO,
                     IdCurso = gsavSolicitud.IDCURSO,
                     Consulta = gsavSolicitud.CONSULTA,
@@ -36,19 +35,18 @@ namespace Upecito.Data.Implementation
             return null;
         }
 
-        public Solicitud Atender(long idSolicitud, long idIntencion, string solucion, string estado, string usuario)
+        public Solicitud Atender(long idSolicitud, long? idIntencion, string solucion, string estado, string usuario)
         {
             try
             {
                 var db = Database.OpenNamedConnection(ConnectionName);
 
-                var result = db.SF_ATENDEROLICITUD(idSolicitud, idIntencion, solucion, estado, usuario);
+                var result = db.SP_ACTUALIZARSOLICITUD(idSolicitud, idIntencion, solucion, estado, usuario);
                 var gsavSolicitud = db.GSAV_SOLICITUD.Get(result.OutputValues["PRPTA"]);
 
                 var solicitud = new Solicitud()
                 {
                     IdSolicitud = gsavSolicitud.IDSOLICITUD,
-                    IdCanalAtencion = gsavSolicitud.IDCANALATENCION,
                     IdAlumno = gsavSolicitud.IDALUMNO,
                     IdCurso = gsavSolicitud.IDCURSO,
                     Consulta = gsavSolicitud.CONSULTA,

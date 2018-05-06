@@ -68,6 +68,9 @@ namespace Upecito.Bot
                         await Conversation.SendAsync(message, () => dialog);
                     }
                 }
+
+                if (message.MembersRemoved.Count > 1)
+                    await Conversation.SendAsync(message, () => new CerrarSesionDialog());
             }
             else if (message.Type == ActivityTypes.ContactRelationUpdate)
             {

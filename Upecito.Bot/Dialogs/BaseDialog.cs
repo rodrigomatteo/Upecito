@@ -21,16 +21,16 @@ namespace Upecito.Bot.Dialogs
             /* El Sistema se conecta con el “Sistema Open DB” solicita la
             programación de actividades para ello envía el nombre de la actividad y
             curso. */
-            Result result;
-            context.UserData.TryGetValue<Result>("result", out result);
-            return result;
+            return context.UserData.GetValueOrDefault<Result>("result");
         }
 
         protected virtual void MostrarRespuesta(IDialogContext context, Result resultado)
         {
             var activity = context.Activity as Activity;
             var connector = new ConnectorClient(new Uri(activity.ServiceUrl));
-            var reply = activity.CreateReply(resultado.Speech);
+            var userName = context.Activity.From.Name;
+            var reply = activity.CreateReply(resultado.Speech.Replace("<<USUARIO>>", userName));
+
             connector.Conversations.ReplyToActivityAsync(reply);
         }
     }
