@@ -48,6 +48,7 @@ namespace Upecito.Bot.Dialogs
         {
             await Process(context);
         }
+
         private async Task ResumeGetAcademicIntent(IDialogContext context, IAwaitable<string> result)
         {
             await Process(context);
@@ -102,7 +103,7 @@ namespace Upecito.Bot.Dialogs
 
                     context.UserData.SetValue<Result>("result", receivedResult);
 
-                    if (intencion != null)
+                    if (intencion != null && intencion.Nombre != string.Empty)
                     {
                         switch (intencion.Nombre)
                         {
@@ -110,14 +111,14 @@ namespace Upecito.Bot.Dialogs
                              * 4.1.7	Si la “Intención de Consulta” es “Programación de Actividades”, 
                              * el sistema extiende el caso de uso: GSAV_CUS005_Consultar Programación de Actividades
                             */
-                            case "PROGRAMACION":
+                            case AppConstant.Intencion.PROGRAMACION:
                                 context.Call(new ProgramacionActividadesDialog(), ResumeAfterSuccessAcademicIntent);
                                 break;
                             /*
                              * 4.1.8	Si la “Intención de Consulta” es “Calendario Académico”, 
                              * el sistema extiende el caso de uso: GSAV_CUS006_Consultar Calendario Académico
                             */
-                            case "CALENDARIO":
+                            case AppConstant.Intencion.CALENDARIO:
                                 context.Call(new CalendarioDialog(), ResumeAfterSuccessAcademicIntent);
                                 break;
                             /*
@@ -125,21 +126,21 @@ namespace Upecito.Bot.Dialogs
                             * “Reglamento de Asistencia”, “Retiro del Curso”, “Promedio Ponderado”, el sistema extiende el caso de uso: 
                             * GSAV_CUS007_Consultar Temas Frecuentes
                            */
-                            case "AULAVIRTUAL":
-                            case "MATRICULA":
-                            case "ASISTENCIA":
-                            case "RETIRO":
-                            case "PROMEDIO":
+                            case AppConstant.Intencion.ORGANIZACION:
+                            case AppConstant.Intencion.MATRICULA:
+                            case AppConstant.Intencion.ASISTENCIA:
+                            case AppConstant.Intencion.RETIRO:
+                            case AppConstant.Intencion.PROMEDIO:
                                 context.Call(new PreguntasFrecuentesDialog(), ResumeAfterSuccessAcademicIntent);
                                 break;
                             /*
                              * 4.1.10  Si la “Intención de Consulta” es “Créditos de un Curso”, el sistema extiende el caso de uso: 
                              * GSAV_CUS008_Consultar Créditos de un Curso
                             */
-                            case "CREDITOS":
+                            case AppConstant.Intencion.CREDITOS:
                                 context.Call(new CreditosDialog(), ResumeAfterSuccessAcademicIntent);
                                 break;
-                            case "Default Fallback Intent":
+                            case AppConstant.Intencion.DEFAULT:
                                 context.Call(new EntrenandoDialog(), ResumeAfterUnknownAcademicIntent);
                                 break;
                             default:
@@ -158,7 +159,7 @@ namespace Upecito.Bot.Dialogs
                     {
                         var userName = context.Activity.From.Name;
                         var message = context.MakeMessage();
-                        message.Text = $"{userName}, no he podido registrar tu solicitud";
+                        message.Text = $"{userName}, no he podido registrar tu solicitud o la intención no se ha encontrado";
 
                         await context.PostAsync(message);
                         context.Wait(ResumeGetAcademicIntent);
@@ -176,6 +177,8 @@ namespace Upecito.Bot.Dialogs
                     context.Call(new SinScoreDialog(), ResumeAfterUnknownAcademicIntent);
                 }
             }
+            else
+                context.Call(new SinScoreDialog(), ResumeAfterUnknownAcademicIntent);
         }
 
         private async Task ResumeAfterSuccessAcademicIntent(IDialogContext context, IAwaitable<object> result)

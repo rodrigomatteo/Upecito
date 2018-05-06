@@ -203,6 +203,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppConstant.cs" />
     <Compile Include="App_Start\BotAppBootstrap.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\MessagesController.cs" />

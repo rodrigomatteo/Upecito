@@ -65,8 +65,7 @@ namespace Upecito.Bot.Dialogs
             var infoCard = new HeroCard
             {
                 Title = "Asesor del Aula Virtual ",
-                Text = "Este es UPECITO bla bla bla",
-                Images = new List<CardImage> { new CardImage("https://cde.peru.com//ima/0/0/9/8/4/984607/611x458/upc.jpg") }
+                Images = new List<CardImage> { new CardImage("https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/UPC_logo_transparente.png/240px-UPC_logo_transparente.png") }
             };
 
             return infoCard.ToAttachment();

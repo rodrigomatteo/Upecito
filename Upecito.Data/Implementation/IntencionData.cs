@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Configuration;
+using System.Data;
+using Oracle.ManagedDataAccess.Client;
 using Simple.Data;
 using Upecito.Data.Interface;
 using Upecito.Model;
@@ -9,18 +12,34 @@ namespace Upecito.Data.Implementation
     {
         public Intencion BuscarIntencionConsulta(string intencion)
         {
+            var categoria = new Intencion();
+
             try
             {
-                var db = Database.OpenNamedConnection(ConnectionName);
+                var cnxOracle = ConfigurationManager.ConnectionStrings[ConnectionName].ToString();
 
-                var result = db.SP_BUSCARINTENCIONCONSULTA(intencion);
-                var gsavIntencion = db.GSAV_INTENCION_CONSULTA.Get(result.OutputValues["RESULTADO"]);
-
-                var categoria = new Intencion()
+                using (var oCnn = new OracleConnection(cnxOracle))
                 {
-                    IdIntencion = gsavIntencion.IDINTENCIONCONSULTA,
-                    Nombre = gsavIntencion.NOMBRE
-                };
+                    OracleCommand oCmd = null;
+                    oCnn.Open();
+                    oCmd = new OracleCommand("SP_BUSCARINTENCIONCONSULTA", oCnn);
+                    oCmd.CommandType = CommandType.StoredProcedure;
+                    oCmd.Parameters.Add(new OracleParameter("pIntencion", OracleDbType.Varchar2)).Value =intencion;
+                    oCmd.Parameters.Add(new OracleParameter("RESULTADO", OracleDbType.RefCursor)).Direction = ParameterDirection.Output;
+                    var rd = oCmd.ExecuteReader();
+                    if (rd.HasRows)
+                    {
+                        if (rd.Read())
+                        {
+                            categoria = new Intencion()
+                            {
+                                IdIntencion = rd.GetInt32(rd.GetOrdinal("IDINTENCIONCONSULTA")),
+                                Nombre = rd.GetString(rd.GetOrdinal("NOMBRE"))
+                            };
+                        }
+                    }
+
+                }
 
                 return categoria;
             }

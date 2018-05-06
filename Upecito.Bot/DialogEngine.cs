@@ -47,9 +47,9 @@ namespace Upecito.Bot
                     if (queryResponse.Status?.Code == (int)HttpStatusCode.OK)
                     {
                         result.Status = (int)HttpStatusCode.OK;
-                        if (queryResponse.Result.Fulfillment != null && string.IsNullOrEmpty(queryResponse.Result.Fulfillment.Speech))
-                            result.Speech = "Oooops!";
-                        else if (queryResponse.Result.Fulfillment != null)
+                        if (queryResponse.Result.Fulfillment != null)
+                        //    result.Speech = "Oooops!";
+                        //else if (queryResponse.Result.Fulfillment != null)
                         {
                             result.Speech = queryResponse.Result.Fulfillment.Speech;
                             var entity = new Intent()
