@@ -49,6 +49,8 @@ namespace Upecito.Bot
 
         private async void HandleSystemMessage(Activity message)
         {
+            var botName = "Bot"; //"Bot" from emulator - "Upecito" from web
+
             if (message.Type == ActivityTypes.DeleteUserData)
             {
                 // Implement user deletion here
@@ -62,11 +64,8 @@ namespace Upecito.Bot
                 if (message.MembersAdded.Any(o => o.Id == message.Recipient.Id))
                 {
                     var bot = message.MembersAdded.FirstOrDefault();
-                    if (bot != null && bot.Name.Equals("Upecito Bot"))
-                    {
-                        var dialog = container.GetInstance<RootDialog>();
-                        await Conversation.SendAsync(message, () => dialog);
-                    }
+                    if (bot != null && bot.Name.Equals(botName))
+                        await Conversation.SendAsync(message, () => new RootDialog());
                 }
 
                 if (message.MembersRemoved.Count > 1)

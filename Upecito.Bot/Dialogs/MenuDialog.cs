@@ -22,9 +22,12 @@ namespace Upecito.Bot.Dialogs
             Academic, Technical
         }
 
-        public async Task StartAsync(IDialogContext context)
+        public Task StartAsync(IDialogContext context)
         {
-            ShowPrompt(context);
+            //ShowPrompt(context);
+            context.Wait(ShowPrompt);
+
+            return Task.CompletedTask;
         }
 
         private async Task OnOptionSelected(IDialogContext context, IAwaitable<Selection> result)
@@ -57,7 +60,12 @@ namespace Upecito.Bot.Dialogs
         private async Task Process(IDialogContext context)
         {
             var activity = context.Activity as Activity;
-            var userId = Convert.ToInt32(context.Activity.From.Id);
+
+            // When called from web
+            //var userId = Convert.ToInt32(context.Activity.From.Id);
+            
+            // When called from emulator
+            var userId = 1;
 
             /*
              * 4.1.4   El Sistema crea una nueva Solicitud Académica con los datos indicados líneas abajo
@@ -258,6 +266,16 @@ namespace Upecito.Bot.Dialogs
             var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
 
             PromptDialog.Choice<Selection>(context, OnOptionSelected, options, "Selecciona el canal de atención en el que requieres ayuda", descriptions: descriptions);
+        }
+
+        private Task ShowPrompt(IDialogContext context, IAwaitable<object> result)
+        {
+            var options = new[] { Selection.Academic, Selection.Technical };
+            var descriptions = new[] { "Consultas Académicas", "Consultas y Problemas Técnicos" };
+
+            PromptDialog.Choice<Selection>(context, OnOptionSelected, options, "Selecciona el canal de atención en el que requieres ayuda", descriptions: descriptions);
+
+            return Task.CompletedTask;
         }
     }
 }
